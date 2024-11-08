@@ -9,7 +9,7 @@ Secure & Reliable: Built with privacy and security in mind to protect user data.
 Responsive Design: Optimized for desktop, tablet, and mobile, so you can connect anywhere.
 
 ## Technology Stack:
-Frontend: React, Tailwind
-Backend: Express
-Database: SQL
-Additional Tools: WebSockets, authentication
+- Frontend: React, Tailwind
+- Backend: Express
+- Database: SQL
+- Additional Tools: WebSockets, authentication
