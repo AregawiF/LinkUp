@@ -5,6 +5,8 @@ const app = express();
 const { Server } = require("socket.io");
 
 app.use(cors());
+app.use(express.json());
+require("dotenv").config();
 
 const server = http.createServer(app);
 
@@ -32,8 +34,15 @@ io.on("connection", (socket) => {
     })
 });
 
-app.listen(3001, () => {
+server.listen(3001, () => {
     console.log("Server running on port 3001");
 });
 
 
+
+mongoose.connect(process.env.MONGODB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+})
+.then(() => console.log("Connected to MongoDB"))
+.catch((err) => console.error("Could not connect to MongoDB:", err));

@@ -16,14 +16,17 @@ function App() {
     });
 
     // Cleanup the socket connection on component unmount
-    return () => {
-      socket.disconnect();
-    };
+    // return () => {
+    //   socket.disconnect();
+    // };
   }, []);
 
   return (
     <div>
-      <h1>Welcome to LinkUp Chat</h1>
+      <h1 className='text-2xl'>Welcome to LinkUp Chat</h1>
+      <h3>Search for groups</h3>
+      <input type="text" />
+      <button>Join Room</button>
     </div>
   );
 }
