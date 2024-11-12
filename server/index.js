@@ -3,12 +3,31 @@ const http = require("http")
 const cors = require("cors")
 const app = express();
 const { Server } = require("socket.io");
+const authRoutes = require('./routes/authRoutes');
+const protect = require('./middleware/authMiddleware');
+const mongoose = require("mongoose");
 
 app.use(cors());
 app.use(express.json());
 require("dotenv").config();
 
 const server = http.createServer(app);
+
+
+mongoose.connect(process.env.MONGODB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+})
+.then(() => console.log("Connected to MongoDB"))
+.catch((err) => console.error("Could not connect to MongoDB:", err));
+
+
+app.use('/api/auth', authRoutes);
+
+app.get('/api/protected', protect, (req, res) => {
+    res.status(200).json({ message: 'This is a protected route', user: req.user });
+});
+
 
 const io = new Server(server, {
     cors: {
@@ -40,9 +59,3 @@ server.listen(3001, () => {
 
 
 
-mongoose.connect(process.env.MONGODB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-})
-.then(() => console.log("Connected to MongoDB"))
-.catch((err) => console.error("Could not connect to MongoDB:", err));

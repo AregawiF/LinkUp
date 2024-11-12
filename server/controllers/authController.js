@@ -1,32 +1,41 @@
-const User = require('../models/user');
+const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const { validationResult } = require('express-validator');
 
 exports.registerUser = async (req, res) => {
-    const { username, email, password } = req.body;
-
+    // console.log('req body', req.body);
+    const {name, username, email, password } = req.body;
     // Check for validation errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+        print("Errors:", errors);
         return res.status(400).json({ errors: errors.array() });
     }
-
+    
     try {
         // Check if user exists
         const userExists = await User.findOne({ email });
         if (userExists) {
+            console.log("Email:", email);
+            console.log("User exists:", userExists);
             return res.status(400).json({ message: 'User already exists' });
         }
 
         // Create and save the new user
-        const newUser = new User({ username, email, password });
-        await newUser.save();
+        const newUser = new User({ name, username, email, password });
+        console.log("New user before save:", newUser);
+        try {
+            await newUser.save();
+        } catch (err) {
+            console.log("Error saving user:", err);
+        }
+        console.log("User saved successfully");
 
         // Generate JWT token
         const token = jwt.sign(
             { userId: newUser._id, email: newUser.email },
             process.env.JWT_SECRET_KEY, 
-            { expiresIn: '1h' }
+            { expiresIn: '3d' }
         );
 
         res.status(201).json({ token });
