@@ -7,26 +7,35 @@ const AuthForms = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const [registerUser, { isLoading: isRegistering }] = useRegisterMutation();
   const [loginUser, { isLoading: isLoggingIn }] = useLoginMutation();
+  const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+
 
   const onSubmit = async (data) => {
     try {
+      setError(''); // Clear previous errors
+      setSuccessMessage(''); 
       if (isLogin) {
         // Handle login
         const response = await loginUser(data);
         if (response.data) {
           localStorage.setItem('token', response.data.token);
-          alert('Login successful!');
+          setSuccessMessage('Login successful! Redirecting...');
+          
+          // alert('Login successful!');
         }
       } else {
         // Handle register
-        console.log(data); // Log the form data to check the structure
         const response = await registerUser(data);
         if (response.data) {
-          alert('Registration successful!');
+          // alert('Registration successful!');
+          setSuccessMessage('Registration successful! You can now log in.');
+          setIsLogin(true);
         }
       }
     } catch (error) {
       console.error('Error:', error);
+      setError(err.response?.data?.message || 'Something went wrong!');
     }
   };
 
@@ -84,6 +93,7 @@ const AuthForms = () => {
           </div>
 
           {/* Submit button */}
+          {error && <p className="text-red-500 text-sm">{error}</p>}
           <button
             type="submit"
             disabled={isRegistering || isLoggingIn}

@@ -4,6 +4,7 @@ const cors = require("cors")
 const app = express();
 const { Server } = require("socket.io");
 const authRoutes = require('./routes/authRoutes');
+const userRoutes = require('./routes/userRoutes');
 const protect = require('./middleware/authMiddleware');
 const mongoose = require("mongoose");
 
@@ -23,6 +24,7 @@ mongoose.connect(process.env.MONGODB_URI, {
 
 
 app.use('/api/auth', authRoutes);
+app.use('/user', userRoutes);
 
 app.get('/api/protected', protect, (req, res) => {
     res.status(200).json({ message: 'This is a protected route', user: req.user });
@@ -39,9 +41,14 @@ const io = new Server(server, {
 io.on("connection", (socket) => {
     console.log(`User Connected: ${socket.id}`);
 
-    socket.on("join_room", (data) => {
-        socket.join(data);
-        console.log(`User with ID: ${socket.id} joined room: ${data}`);
+    socket.on("join_room", (roomId) => {
+        socket.join(roomId);
+        console.log(`User with ID: ${socket.id} joined room: ${roomId}`);
+    })
+
+    socket.on('leave_room', (roomId) => {
+    socket.leave(roomId);
+    console.log(`User left room: ${roomId}`);
     })
 
     socket.on("send_message", (data) => {

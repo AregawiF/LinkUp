@@ -2,20 +2,29 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import AuthForms from './components/authForms';
 import PrivateRoute from './components/privateRoute';
+import Dashboard from './components/Dashboard';
+import { SocketProvider } from './context/SocketContext';  
 
 const App = () => {
   return (
+    <SocketProvider>
     <Router>
       <Routes>
         <Route path="/login" element={<AuthForms />} />
         <Route path="/register" element={<AuthForms />} />
+        <Route path="/chat/:roomId" element={
+          <PrivateRoute>
+            <ChatWindow />
+          </PrivateRoute>
+          } />
         <Route path="/dashboard" element={
           <PrivateRoute>
-            <div>Welcome to your dashboard!</div>
+            <Dashboard/>
           </PrivateRoute>
         } />
       </Routes>
     </Router>
+    </SocketProvider>
   );
 };
 
